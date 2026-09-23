@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>De Bedrieger</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@500;700;800&display=swap');
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin:0; padding:0; background:#171a3d; min-height:100vh; font-family:'Nunito', system-ui, sans-serif; color:#171a3d; }
+  .font-display { font-family:'Baloo 2', system-ui, sans-serif; }
+  #app { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:16px; }
+  .wrap { width:100%; max-width:420px; }
+  .card { background:#fff8ed; border-radius:24px; box-shadow:0 10px 0 0 rgba(0,0,0,0.25); padding:24px; animation:pop .2s ease-out; }
+  @keyframes pop { 0%{ transform:scale(.94); opacity:.6 } 100%{ transform:scale(1); opacity:1 } }
+  h1.title { font-family:'Baloo 2'; text-align:center; font-size:2.2rem; font-weight:800; color:#ffc93c; text-shadow:0 3px 0 rgba(0,0,0,.3); margin:0; }
+  .subtitle { text-align:center; color:#bcc0e8; font-weight:800; margin:4px 0 20px; }
+  .row-center { display:flex; align-items:center; justify-content:center; gap:16px; margin-bottom:20px; }
+  .circle-btn { width:44px; height:44px; border-radius:999px; background:#171a3d; color:#fff; border:none; display:flex; align-items:center; justify-content:center; font-size:1.3rem; font-weight:800; cursor:pointer; }
+  .count { font-family:'Baloo 2'; font-size:1.9rem; font-weight:800; width:40px; text-align:center; }
+  .label-row { display:flex; align-items:center; gap:8px; margin-bottom:8px; font-family:'Baloo 2'; font-weight:700; font-size:1.15rem; }
+  input.name-input { width:100%; border-radius:12px; border:2px solid rgba(23,26,61,0.15); padding:10px 12px; font-weight:700; font-size:1rem; margin-bottom:8px; font-family:inherit; color:#171a3d; }
+  input.name-input:focus { outline:none; border-color:#ff5d5d; }
+  .names-box { max-height:180px; overflow-y:auto; padding-right:4px; margin-bottom:18px; }
+  .imp-choice, .cat-choice, .level-choice { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; }
+  .imp-btn { flex:1; border-radius:12px; padding:8px 0; font-family:'Baloo 2'; font-weight:700; border:2px solid #171a3d; background:transparent; color:#171a3d; cursor:pointer; }
+  .imp-btn.active { background:#ff5d5d; color:#fff8ed; }
+  .cat-btn { border-radius:999px; padding:6px 12px; font-size:.9rem; font-weight:700; border:2px solid #171a3d; background:transparent; color:#171a3d; cursor:pointer; }
+  .cat-btn.active { background:#2ec4b6; color:#fff8ed; }
+  .level-btn { flex:1; border-radius:12px; padding:10px 4px; font-family:'Baloo 2'; font-weight:700; border:2px solid #171a3d; background:transparent; color:#171a3d; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:2px; }
+  .level-btn .lvl-emoji { font-size:1.2rem; }
+  .level-btn.active[data-level="makkelijk"] { background:#2ec4b6; color:#fff8ed; }
+  .level-btn.active[data-level="medium"] { background:#ffc93c; color:#171a3d; }
+  .level-btn.active[data-level="moeilijk"] { background:#ff5d5d; color:#fff8ed; }
+  .big-btn { width:100%; border:none; border-radius:16px; padding:16px 20px; font-family:'Baloo 2'; font-size:1.15rem; font-weight:800; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 5px 0 0 rgba(0,0,0,0.2); cursor:pointer; background:#ffc93c; color:#171a3d; }
+  .big-btn:active { transform:translateY(3px); box-shadow:none; }
+  .big-btn:disabled { opacity:.4; pointer-events:none; }
+  .big-btn.dark { background:#171a3d; color:#fff8ed; }
+  .big-btn.green { background:#2ec4b6; color:#fff8ed; }
+  .big-btn.red { background:#ff5d5d; color:#fff8ed; }
+  .hint { text-align:center; font-size:.85rem; color:rgba(23,26,61,0.4); font-weight:700; margin-top:8px; }
+  .reveal-box { user-select:none; margin:0 auto; width:100%; max-width:240px; aspect-ratio:1/1; border-radius:24px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:16px; cursor:pointer; background:#171a3d; transition:background-color .15s; }
+  .reveal-box .emoji { font-size:2.4rem; margin-bottom:8px; }
+  .reveal-box .word { font-family:'Baloo 2'; font-size:1.8rem; font-weight:800; color:#fff; }
+  .reveal-box .tipword { font-family:'Baloo 2'; font-size:1.9rem; font-weight:800; color:#fff; margin-top:2px; }
+  .reveal-box .small { color:rgba(255,255,255,0.85); font-weight:700; font-size:.85rem; margin-top:8px; }
+  .reveal-box .tiny { color:rgba(255,255,255,0.65); font-size:.75rem; margin-top:4px; }
+  .center-text { text-align:center; }
+  .timer-circle { margin:0 auto 24px; width:170px; height:170px; border-radius:999px; border:8px solid #2ec4b6; display:flex; align-items:center; justify-content:center; }
+  .timer-circle .time { font-family:'Baloo 2'; font-size:2.4rem; font-weight:800; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
+  .player-row { display:flex; align-items:center; justify-content:space-between; border-radius:12px; padding:8px 12px; margin-bottom:8px; font-weight:700; }
+  .starter-banner { background:#ffc93c; border-radius:16px; padding:12px; text-align:center; font-family:'Baloo 2'; font-weight:800; margin-bottom:20px; }
+  .level-pill { display:inline-block; border-radius:999px; padding:2px 10px; font-size:.75rem; font-weight:800; font-family:'Baloo 2'; margin-left:6px; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// ---------------------------------------------------------------------------
+// Woordbank: per categorie drie niveaus (makkelijk / medium / moeilijk).
+// Elk woord heeft één los tip-woord (een concreet zelfstandig naamwoord dat
+// ergens mee te maken heeft) voor de bedrieger, bv. patat -> aardappel.
+// Hoe hoger het niveau, hoe losser/vager dat ene tip-woord staat t.o.v. het
+// geheime woord.
+// ---------------------------------------------------------------------------
+const LEVELS = [
+  { key:"makkelijk", label:"Makkelijk", emoji:"🟢", sub:"vanaf 7 jaar" },
+  { key:"medium",    label:"Medium",    emoji:"🟡", sub:"vanaf 9 jaar" },
+  { key:"moeilijk",  label:"Moeilijk",  emoji:"🔴", sub:"vanaf 11 jaar / volwassenen" },
+];
+
+const CATEGORIES = {
+  dieren: { label:"Dieren", emoji:"🐾", levels:{
+    makkelijk:[["hond","riem"],["kat","muis"],["olifant","slurf"],["leeuw","manen"],["aap","banaan"],["vis","kieuw"],["vogel","veer"],["konijn","wortel"]],
+    medium:[["giraffe","nek"],["panda","bamboe"],["krokodil","tanden"],["dolfijn","golf"],["uil","nacht"],["kangoeroe","buidel"],["zebra","streep"],["pinguïn","ijsschots"]],
+    moeilijk:[["stokstaartje","woestijn"],["luiaard","boom"],["octopus","tentakel"],["kameleon","tong"],["vleermuis","grot"],["walvis","oceaan"],["egel","stekel"],["das","burcht"]],
+  }},
+  eten: { label:"Eten", emoji:"🍕", levels:{
+    makkelijk:[["pizza","oven"],["appel","klokhuis"],["banaan","schil"],["chocolade","reep"],["ijsje","hoorn"],["brood","boter"],["kaas","melk"],["snoep","tanden"]],
+    medium:[["soep","lepel"],["pannenkoek","stroop"],["patat","aardappel"],["taart","kaars"],["druiven","tros"],["popcorn","bioscoop"],["yoghurt","beker"],["spaghetti","vork"]],
+    moeilijk:[["risotto","rijst"],["sushi","zeewier"],["hachee","ui"],["stamppot","puree"],["ratatouille","courgette"],["couscous","Marokko"],["tiramisu","koffie"],["bruschetta","tomaat"]],
+  }},
+  school: { label:"School", emoji:"✏️", levels:{
+    makkelijk:[["juf","schoolbord"],["meester","rapport"],["potlood","punt"],["schrift","huiswerk"],["gum","vlek"],["pauze","bel"],["klas","leerling"],["boek","bladzijde"]],
+    medium:[["rekenen","getal"],["tekenen","kleurpotlood"],["schooltas","rugzak"],["schoolbord","krijt"],["proefwerk","cijfer"],["rooster","lesuur"],["gymles","gymzaal"],["bibliotheek","boekenkast"]],
+    moeilijk:[["diploma","ceremonie"],["mentor","coach"],["examen","spanning"],["curriculum","lesstof"],["semester","periode"],["plenair","vergadering"],["dictee","spelling"],["spreekbeurt","publiek"]],
+  }},
+  sport: { label:"Sport", emoji:"⚽", levels:{
+    makkelijk:[["voetbal","doelpunt"],["zwemmen","zwembad"],["fietsen","trapper"],["hardlopen","finish"],["dansen","muziek"],["tennis","racket"],["basketbal","ring"],["hockey","stick"]],
+    medium:[["turnen","balk"],["karate","gordel"],["skiën","sneeuw"],["trampoline","veer"],["badminton","shuttle"],["volleybal","net"],["judo","worp"],["atletiek","baan"]],
+    moeilijk:[["waterpolo","zwembad"],["schermen","degen"],["roeien","riem"],["curling","steen"],["triatlon","medaille"],["boogschieten","pijl"],["snowboarden","plank"],["worstelen","mat"]],
+  }},
+  vervoer: { label:"Vervoer", emoji:"🚗", levels:{
+    makkelijk:[["auto","wiel"],["trein","rail"],["fiets","trapper"],["vliegtuig","vleugel"],["boot","zeil"],["bus","chauffeur"],["step","stuur"],["motor","uitlaat"]],
+    medium:[["brandweerauto","slang"],["politieauto","sirene"],["tractor","boerderij"],["helikopter","wiek"],["vrachtwagen","lading"],["camper","vakantie"],["kabelbaan","berg"],["cruiseschip","zee"]],
+    moeilijk:[["onderzeeër","periscoop"],["zeppelin","gas"],["monorail","rail"],["catamaran","romp"],["zweeftrein","magneet"],["gondel","kabel"],["luchtballon","mand"],["ruimteraket","astronaut"]],
+  }},
+  buiten: { label:"Buiten spelen", emoji:"🌳", levels:{
+    makkelijk:[["schommel","touw"],["glijbaan","trap"],["zandbak","emmer"],["vlieger","wind"],["bal","doel"],["krijt","stoep"],["zwembad","duikplank"],["strand","schelp"]],
+    medium:[["bos","boom"],["park","bankje"],["regenboog","kleur"],["sneeuwpop","wortel"],["klimrek","ladder"],["waterpistool","water"],["springtouw","handvat"],["knikkers","glas"]],
+    moeilijk:[["hinkelbaan","vak"],["zeskamp","estafette"],["verstoppertje","schuilplaats"],["boomhut","ladder"],["waterval","rots"],["kampvuur","marshmallow"],["moestuin","tomaat"],["weiland","hek"]],
+  }},
+  sprookjes: { label:"Sprookjes", emoji:"🐉", levels:{
+    makkelijk:[["draak","vuur"],["prinses","kroon"],["ridder","zwaard"],["kasteel","toren"],["tovenaar","toverstok"],["heks","bezem"],["piraat","schat"],["spook","ketting"]],
+    medium:[["fee","vleugel"],["reus","voetstap"],["eenhoorn","hoorn"],["monster","klauw"],["elf","bos"],["dwerg","mijn"],["trol","brug"],["zeemeermin","vin"]],
+    moeilijk:[["feniks","vlam"],["sfinx","raadsel"],["cycloop","oog"],["alchemist","goud"],["betovering","vloek"],["orakel","profetie"],["labyrint","muur"],["schatkist","juweel"]],
+  }},
+  huis: { label:"Thuis", emoji:"🏠", levels:{
+    makkelijk:[["bed","kussen"],["keuken","pan"],["badkamer","zeep"],["televisie","afstandsbediening"],["bank","deken"],["tafel","bord"],["deur","slot"],["tuin","schutting"]],
+    medium:[["zolder","dak"],["kussen","bed"],["kelder","opslag"],["garage","auto"],["schoorsteen","rook"],["veranda","terras"],["gang","deur"],["plafond","lamp"]],
+    moeilijk:[["dakkapel","raam"],["erker","uitbouw"],["hal","kapstok"],["bijkeuken","wasmachine"],["vliering","doos"],["plavuizen","tegel"],["spouwmuur","isolatie"],["kroonluchter","lamp"]],
+  }},
+  weer: { label:"Weer", emoji:"☀️", levels:{
+    makkelijk:[["zon","straal"],["regen","druppel"],["sneeuw","vlok"],["wind","molen"],["wolk","hemel"],["ijs","schaats"],["mist","sluier"],["onweer","bliksem"]],
+    medium:[["hagel","korrel"],["storm","schade"],["dooi","water"],["vorst","ijs"],["motregen","nevel"],["bewolking","lucht"],["buien","paraplu"],["windstoot","vlaag"]],
+    moeilijk:[["onweersbui","donder"],["hittegolf","thermometer"],["ijzel","weg"],["windkracht","schaal"],["luchtdruk","barometer"],["weerbericht","presentator"],["orkaan","schade"],["tornado","trechter"]],
+  }},
+  beroepen: { label:"Beroepen", emoji:"👷", levels:{
+    makkelijk:[["dokter","stethoscoop"],["brandweerman","slang"],["politieagent","boef"],["bakker","brood"],["kapper","schaar"],["boer","tractor"],["piloot","cockpit"],["zanger","microfoon"]],
+    medium:[["dierenarts","kliniek"],["tandarts","boor"],["timmerman","hout"],["kok","pan"],["monteur","sleutel"],["journalist","krant"],["fotograaf","lens"],["verpleegkundige","injectie"]],
+    moeilijk:[["notaris","handtekening"],["advocaat","rechtbank"],["architect","blauwdruk"],["ingenieur","brug"],["boekhouder","rekenmachine"],["diplomaat","ambassade"],["chirurg","scalpel"],["astronaut","ruimtepak"]],
+  }},
+};
+const CAT_KEYS = Object.keys(CATEGORIES);
+
+function shuffle(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function pad2(n){ return n<10 ? "0"+n : ""+n; }
+
+// ---------------------------------------------------------------------------
+// State
+// ---------------------------------------------------------------------------
+const state = {
+  screen: "setup",
+  numPlayers: 4,
+  names: ["","","",""],
+  numImpostors: 1,
+  selectedCats: new Set(CAT_KEYS),
+  level: "makkelijk",
+  discussSeconds: 180,
+  players: [],
+  secretWord: "",
+  secretCatLabel: "",
+  impostorHint: "",
+  starterIndex: 0,
+  current: 0,
+  peeking: false,
+  seenIt: false,
+  timeLeft: 180,
+  timerRunning: false,
+  timerHandle: null,
+};
+
+function maxImp(){ return state.numPlayers >= 6 ? 2 : 1; }
+function levelInfo(key){ return LEVELS.find(l=>l.key===key); }
+
+function pickRoundContent(){
+  const pool = Array.from(state.selectedCats);
+  const catKey = pool[Math.floor(Math.random()*pool.length)];
+  const cat = CATEGORIES[catKey];
+  const wordList = cat.levels[state.level];
+  const [word, hint] = wordList[Math.floor(Math.random()*wordList.length)];
+  state.secretWord = word;
+  state.secretCatLabel = cat.emoji + " " + cat.label;
+  state.impostorHint = hint;
+}
+
+function assignRoles(playerCount){
+  const order = shuffle([...Array(playerCount).keys()]);
+  return new Set(order.slice(0, state.numImpostors));
+}
+
+function startGame(){
+  pickRoundContent();
+  const impostorSet = assignRoles(state.numPlayers);
+  state.players = state.names.map((n,i)=>({ name:(n.trim()||("Speler "+(i+1))), isImpostor: impostorSet.has(i) }));
+  state.starterIndex = Math.floor(Math.random()*state.players.length);
+  state.current = 0; state.peeking=false; state.seenIt=false;
+  state.timeLeft = state.discussSeconds; state.timerRunning=false;
+  state.screen = "reveal";
+  render();
+}
+
+function newRoundSamePlayers(){
+  pickRoundContent();
+  const impostorSet = assignRoles(state.players.length);
+  state.players = state.players.map((p,i)=>({ name:p.name, isImpostor: impostorSet.has(i) }));
+  state.starterIndex = Math.floor(Math.random()*state.players.length);
+  state.current = 0; state.peeking=false; state.seenIt=false;
+  state.timeLeft = state.discussSeconds; state.timerRunning=false;
+  state.screen = "reveal";
+  render();
+}
+
+function nextPlayer(){
+  state.peeking=false; state.seenIt=false;
+  if(state.current+1 < state.players.length){ state.current++; }
+  else { state.screen="discuss"; }
+  render();
+}
+
+function toggleTimer(){
+  state.timerRunning = !state.timerRunning;
+  if(state.timerRunning){
+    state.timerHandle = setInterval(()=>{
+      if(state.timeLeft>0){ state.timeLeft--; renderTimerOnly(); }
+      if(state.timeLeft===0){ state.timerRunning=false; clearInterval(state.timerHandle); render(); }
+    },1000);
+  } else {
+    clearInterval(state.timerHandle);
+  }
+  render();
+}
+
+function resetTimer(){
+  clearInterval(state.timerHandle);
+  state.timerRunning=false;
+  state.timeLeft = state.discussSeconds;
+  render();
+}
+
+// ---------------------------------------------------------------------------
+// Render
+// ---------------------------------------------------------------------------
+const app = document.getElementById("app");
+
+function render(){
+  if(state.screen==="setup") app.innerHTML = renderSetup();
+  else if(state.screen==="reveal") app.innerHTML = renderReveal();
+  else if(state.screen==="discuss") app.innerHTML = renderDiscuss();
+  else if(state.screen==="result") app.innerHTML = renderResult();
+  attachHandlers();
+}
+
+function renderTimerOnly(){
+  const el = document.getElementById("timeDisplay");
+  if(el) el.textContent = pad2(Math.floor(state.timeLeft/60))+":"+pad2(state.timeLeft%60);
+  const circle = document.getElementById("timerCircle");
+  if(circle) circle.style.borderColor = state.timeLeft===0 ? "#ff5d5d" : "#2ec4b6";
+}
+
+function levelPillColor(key){
+  return key==="makkelijk" ? "#2ec4b6" : key==="medium" ? "#ffc93c" : "#ff5d5d";
+}
+
+function renderSetup(){
+  let namesHtml = "";
+  for(let i=0;i<state.numPlayers;i++){
+    namesHtml += `<input class="name-input" data-idx="${i}" value="${state.names[i]||""}" placeholder="Naam speler ${i+1}" maxlength="12">`;
+  }
+  let impHtml = "";
+  for(let n=1;n<=maxImp();n++){
+    impHtml += `<button class="imp-btn ${state.numImpostors===n?'active':''}" data-imp="${n}">${n}</button>`;
+  }
+  let catHtml = "";
+  CAT_KEYS.forEach(key=>{
+    const cat = CATEGORIES[key];
+    const active = state.selectedCats.has(key);
+    catHtml += `<button class="cat-btn ${active?'active':''}" data-cat="${key}">${cat.emoji} ${cat.label}</button>`;
+  });
+  let lvlHtml = "";
+  LEVELS.forEach(l=>{
+    const active = state.level===l.key;
+    lvlHtml += `<button class="level-btn ${active?'active':''}" data-level="${l.key}"><span class="lvl-emoji">${l.emoji}</span><span>${l.label}</span></button>`;
+  });
+  const currentLvl = levelInfo(state.level);
+  return `
+    <div class="wrap">
+      <h1 class="title">De Bedrieger</h1>
+      <p class="subtitle">Iedereen krijgt hetzelfde woord... op één na 🕵️</p>
+      <div class="card">
+        <div class="label-row">👥 Aantal spelers</div>
+        <div class="row-center">
+          <button class="circle-btn" id="playersMinus">−</button>
+          <span class="count">${state.numPlayers}</span>
+          <button class="circle-btn" id="playersPlus">+</button>
+        </div>
+        <div class="names-box">${namesHtml}</div>
+        <div class="label-row">🎭 Aantal bedriegers</div>
+        <div class="imp-choice">${impHtml}</div>
+        <div class="label-row">📶 Niveau</div>
+        <div class="level-choice">${lvlHtml}</div>
+        <p class="hint" style="margin:-12px 0 20px">${currentLvl.emoji} ${currentLvl.label} — ${currentLvl.sub}. Hoe hoger het niveau, hoe losser het tip-woord voor de bedrieger.</p>
+        <div class="label-row">🗂️ Categorieën</div>
+        <div class="cat-choice">${catHtml}</div>
+        <div class="label-row">⏱️ Bedenktijd</div>
+        <div class="row-center">
+          <button class="circle-btn" id="timeMinus">−</button>
+          <span class="count" style="width:70px">${pad2(Math.floor(state.discussSeconds/60))}:${pad2(state.discussSeconds%60)}</span>
+          <button class="circle-btn" id="timePlus">+</button>
+        </div>
+        <button class="big-btn" id="startBtn">▶️ Start het spel</button>
+      </div>
+    </div>`;
+}
+
+function renderReveal(){
+  const p = state.players[state.current];
+  const lvl = levelInfo(state.level);
+  let boxHtml;
+  if(state.peeking){
+    if(p.isImpostor){
+      boxHtml = `<div class="emoji">🎭</div>
+        <p class="word" style="font-size:1.15rem">Jij bent de bedrieger!</p>
+        <p class="small">Categorie: ${state.secretCatLabel}</p>
+        <p class="small" style="margin-top:10px">Jouw tip-woord</p>
+        <p class="tipword">${state.impostorHint}</p>
+        <p class="tiny">Je kent het woord niet. Gebruik dit ene woord om mee te bluffen!</p>`;
+    } else {
+      boxHtml = `<div class="emoji">🤫</div>
+        <p class="small">Het geheime woord is</p>
+        <p class="word">${state.secretWord}</p>`;
+    }
+  } else {
+    boxHtml = `<div class="emoji">👁️</div>
+      <p class="small" style="font-family:'Baloo 2';color:#fff">Houd ingedrukt om te kijken</p>
+      <p class="tiny">Zorg dat niemand anders meekijkt!</p>`;
+  }
+  const bg = state.peeking ? (p.isImpostor ? "#ff5d5d" : "#2ec4b6") : "#171a3d";
+  return `
+    <div class="wrap">
+      <p class="subtitle" style="margin-bottom:8px">Speler ${state.current+1} van ${state.players.length}
+        <span class="level-pill" style="background:${levelPillColor(state.level)};color:${state.level==='medium'?'#171a3d':'#fff8ed'}">${lvl.emoji} ${lvl.label}</span>
+      </p>
+      <div class="card">
+        <p class="center-text" style="font-family:'Baloo 2';font-size:1.5rem;font-weight:800;margin:0 0 4px">${p.name}</p>
+        <p class="hint" style="margin-bottom:20px">Geef het toestel door aan ${p.name} voordat je verder gaat</p>
+        <div class="reveal-box" id="revealBox" style="background:${bg}">${boxHtml}</div>
+        <div style="margin-top:24px">
+          <button class="big-btn" id="nextBtn" ${state.seenIt?"":"disabled"}>➡️ ${state.current+1===state.players.length?"Iedereen heeft gekeken":"Volgende speler"}</button>
+          ${state.seenIt?"":'<p class="hint">Bekijk eerst je woord</p>'}
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderDiscuss(){
+  const starter = state.players[state.starterIndex];
+  return `
+    <div class="wrap">
+      <div class="card">
+        <p class="center-text" style="font-family:'Baloo 2';font-size:1.5rem;font-weight:800;margin:0 0 4px">Tijd om te praten!</p>
+        <p class="hint" style="margin-bottom:16px">Iedereen vertelt om de beurt iets over het woord. Wie klinkt verdacht?</p>
+        <div class="starter-banner">🎬 ${starter.name} begint</div>
+        <div class="timer-circle" id="timerCircle" style="border-color:${state.timeLeft===0?'#ff5d5d':'#2ec4b6'}">
+          <span class="time" id="timeDisplay">${pad2(Math.floor(state.timeLeft/60))}:${pad2(state.timeLeft%60)}</span>
+        </div>
+        <div class="grid2">
+          <button class="big-btn ${state.timerRunning?'red':'green'}" id="toggleTimerBtn">${state.timerRunning?"⏸ Pauze":"▶️ Start"}</button>
+          <button class="big-btn dark" id="resetTimerBtn">🔄 Reset</button>
+        </div>
+        <button class="big-btn" id="revealResultBtn">👁️ Stemmen &amp; onthullen</button>
+      </div>
+    </div>`;
+}
+
+function renderResult(){
+  const lvl = levelInfo(state.level);
+  let rows = "";
+  state.players.forEach(p=>{
+    const bg = p.isImpostor ? "#ff5d5d22" : "#2ec4b622";
+    const tag = p.isImpostor ? '<span style="color:#ff5d5d">✕ bedrieger</span>' : '<span style="color:#2ec4b6">✓ wist het woord</span>';
+    rows += `<div class="player-row" style="background:${bg}"><span>${p.name}</span>${tag}</div>`;
+  });
+  const impCount = state.players.filter(p=>p.isImpostor).length;
+  return `
+    <div class="wrap">
+      <div class="card">
+        <p class="hint" style="margin-bottom:2px">Categorie: ${state.secretCatLabel} · Niveau: ${lvl.emoji} ${lvl.label}</p>
+        <p class="center-text" style="font-family:'Baloo 2';font-size:1.9rem;font-weight:800;margin:0 0 6px">${state.secretWord}</p>
+        <p class="hint" style="margin-bottom:20px">Tip-woord dat de bedrieger kreeg: "${state.impostorHint}"</p>
+        <p style="font-family:'Baloo 2';font-weight:700;margin-bottom:8px">Speler overzicht</p>
+        ${rows}
+        <p class="hint" style="margin:12px 0 20px">${impCount>1?"Er waren dit keer twee bedriegers.":"Er was dit keer één bedrieger."}</p>
+        <button class="big-btn" id="newRoundBtn" style="margin-bottom:12px">🔀 Nieuwe ronde, zelfde spelers</button>
+        <button class="big-btn dark" id="backToSetupBtn">⬅️ Terug naar instellingen</button>
+      </div>
+    </div>`;
+}
+
+// ---------------------------------------------------------------------------
+// Event handlers
+// ---------------------------------------------------------------------------
+function attachHandlers(){
+  if(state.screen==="setup"){
+    document.getElementById("playersMinus").onclick = ()=>{ setNumPlayers(state.numPlayers-1); };
+    document.getElementById("playersPlus").onclick = ()=>{ setNumPlayers(state.numPlayers+1); };
+    document.getElementById("timeMinus").onclick = ()=>{ state.discussSeconds=Math.max(30,state.discussSeconds-30); render(); };
+    document.getElementById("timePlus").onclick = ()=>{ state.discussSeconds=Math.min(600,state.discussSeconds+30); render(); };
+    document.getElementById("startBtn").onclick = startGame;
+    document.querySelectorAll(".name-input").forEach(inp=>{
+      inp.oninput = (e)=>{ state.names[+e.target.dataset.idx] = e.target.value; };
+    });
+    document.querySelectorAll(".imp-btn").forEach(btn=>{
+      btn.onclick = ()=>{ state.numImpostors = +btn.dataset.imp; render(); };
+    });
+    document.querySelectorAll(".level-btn").forEach(btn=>{
+      btn.onclick = ()=>{ state.level = btn.dataset.level; render(); };
+    });
+    document.querySelectorAll(".cat-btn").forEach(btn=>{
+      btn.onclick = ()=>{
+        const key = btn.dataset.cat;
+        if(state.selectedCats.has(key)){ if(state.selectedCats.size>1) state.selectedCats.delete(key); }
+        else state.selectedCats.add(key);
+        render();
+      };
+    });
+  } else if(state.screen==="reveal"){
+    const box = document.getElementById("revealBox");
+    const peek = (e)=>{ if(e.cancelable) e.preventDefault(); state.peeking=true; state.seenIt=true; render(); };
+    const unpeek = ()=>{ state.peeking=false; render(); };
+    box.addEventListener("mousedown", peek);
+    box.addEventListener("mouseup", unpeek);
+    box.addEventListener("mouseleave", unpeek);
+    box.addEventListener("touchstart", peek, {passive:false});
+    box.addEventListener("touchend", unpeek);
+    document.getElementById("nextBtn").onclick = nextPlayer;
+  } else if(state.screen==="discuss"){
+    document.getElementById("toggleTimerBtn").onclick = toggleTimer;
+    document.getElementById("resetTimerBtn").onclick = resetTimer;
+    document.getElementById("revealResultBtn").onclick = ()=>{ clearInterval(state.timerHandle); state.screen="result"; render(); };
+  } else if(state.screen==="result"){
+    document.getElementById("newRoundBtn").onclick = newRoundSamePlayers;
+    document.getElementById("backToSetupBtn").onclick = ()=>{ state.screen="setup"; render(); };
+  }
+}
+
+function setNumPlayers(n){
+  n = Math.max(3, Math.min(10, n));
+  state.numPlayers = n;
+  while(state.names.length < n) state.names.push("");
+  while(state.names.length > n) state.names.pop();
+  if(state.numImpostors > maxImp()) state.numImpostors = maxImp();
+  render();
+}
+
+render();
+</script>
+</body>
+</html>

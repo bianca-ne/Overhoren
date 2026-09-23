@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>Hints — Uitbeeldspel</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@500;700;800&display=swap');
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin:0; padding:0; background:#171a3d; min-height:100vh; font-family:'Nunito', system-ui, sans-serif; color:#171a3d; }
+  .font-display { font-family:'Baloo 2', system-ui, sans-serif; }
+  #app { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:16px; }
+  .wrap { width:100%; max-width:420px; }
+  .card { background:#fff8ed; border-radius:24px; box-shadow:0 10px 0 0 rgba(0,0,0,0.25); padding:24px; animation:pop .2s ease-out; }
+  @keyframes pop { 0%{ transform:scale(.94); opacity:.6 } 100%{ transform:scale(1); opacity:1 } }
+  h1.title { font-family:'Baloo 2'; text-align:center; font-size:2.2rem; font-weight:800; color:#ffc93c; text-shadow:0 3px 0 rgba(0,0,0,.3); margin:0; }
+  .subtitle { text-align:center; color:#bcc0e8; font-weight:800; margin:4px 0 20px; }
+  .row-center { display:flex; align-items:center; justify-content:center; gap:16px; margin-bottom:20px; }
+  .circle-btn { width:44px; height:44px; border-radius:999px; background:#171a3d; color:#fff; border:none; display:flex; align-items:center; justify-content:center; font-size:1.3rem; font-weight:800; cursor:pointer; }
+  .count { font-family:'Baloo 2'; font-size:1.9rem; font-weight:800; width:40px; text-align:center; }
+  .label-row { display:flex; align-items:center; gap:8px; margin-bottom:8px; font-family:'Baloo 2'; font-weight:700; font-size:1.15rem; }
+  input.name-input { width:100%; border-radius:12px; border:2px solid rgba(23,26,61,0.15); padding:10px 12px; font-weight:700; font-size:1rem; margin-bottom:8px; font-family:inherit; color:#171a3d; }
+  input.name-input:focus { outline:none; border-color:#ff5d5d; }
+  .names-box { max-height:170px; overflow-y:auto; padding-right:4px; margin-bottom:18px; }
+  .cat-choice, .level-choice { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; }
+  .cat-btn { border-radius:999px; padding:6px 12px; font-size:.9rem; font-weight:700; border:2px solid #171a3d; background:transparent; color:#171a3d; cursor:pointer; }
+  .cat-btn.active { background:#2ec4b6; color:#fff8ed; }
+  .level-btn { flex:1; border-radius:12px; padding:10px 4px; font-family:'Baloo 2'; font-weight:700; border:2px solid #171a3d; background:transparent; color:#171a3d; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:2px; }
+  .level-btn .lvl-emoji { font-size:1.2rem; }
+  .level-btn.active[data-level="makkelijk"] { background:#2ec4b6; color:#fff8ed; }
+  .level-btn.active[data-level="medium"] { background:#ffc93c; color:#171a3d; }
+  .level-btn.active[data-level="moeilijk"] { background:#ff5d5d; color:#fff8ed; }
+  .big-btn { width:100%; border:none; border-radius:16px; padding:16px 20px; font-family:'Baloo 2'; font-size:1.15rem; font-weight:800; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 5px 0 0 rgba(0,0,0,0.2); cursor:pointer; background:#ffc93c; color:#171a3d; }
+  .big-btn:active { transform:translateY(3px); box-shadow:none; }
+  .big-btn:disabled { opacity:.4; pointer-events:none; }
+  .big-btn.dark { background:#171a3d; color:#fff8ed; }
+  .big-btn.green { background:#2ec4b6; color:#fff8ed; }
+  .big-btn.red { background:#ff5d5d; color:#fff8ed; }
+  .hint { text-align:center; font-size:.85rem; color:rgba(23,26,61,0.4); font-weight:700; margin-top:8px; }
+  .center-text { text-align:center; }
+  .timer-circle { margin:0 auto 20px; width:140px; height:140px; border-radius:999px; border:8px solid #2ec4b6; display:flex; align-items:center; justify-content:center; }
+  .timer-circle .time { font-family:'Baloo 2'; font-size:2rem; font-weight:800; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
+  .team-row { display:flex; align-items:center; justify-content:space-between; border-radius:12px; padding:10px 14px; margin-bottom:8px; font-weight:700; }
+  .team-banner { border-radius:16px; padding:16px; text-align:center; font-family:'Baloo 2'; font-weight:800; margin-bottom:20px; }
+  .level-pill { display:inline-block; border-radius:999px; padding:2px 10px; font-size:.75rem; font-weight:800; font-family:'Baloo 2'; margin-left:6px; }
+  .word-box { user-select:none; margin:0 auto 20px; width:100%; min-height:150px; border-radius:24px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px; background:#171a3d; }
+  .word-box .word { font-family:'Baloo 2'; font-weight:800; color:#fff; line-height:1.2; }
+  .word-box .cat { color:rgba(255,255,255,0.6); font-weight:700; font-size:.85rem; margin-top:10px; }
+  .trophy { font-size:3rem; text-align:center; margin-bottom:8px; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// ---------------------------------------------------------------------------
+// Woordbank speciaal voor uitbeelden: acties, wezens, beroepen, emoties,
+// bewegingen en uitdrukkingen — allemaal goed te spelen zonder te praten.
+// Bewust een andere bank dan "De Bedrieger" (geen losse zelfstandige
+// naamwoorden om te raden via een tip, maar dingen die je fysiek kunt doen).
+// ---------------------------------------------------------------------------
+const LEVELS = [
+  { key:"makkelijk", label:"Makkelijk", emoji:"🟢", sub:"vanaf 7 jaar" },
+  { key:"medium",    label:"Medium",    emoji:"🟡", sub:"vanaf 9 jaar" },
+  { key:"moeilijk",  label:"Moeilijk",  emoji:"🔴", sub:"vanaf 11 jaar / volwassenen" },
+];
+
+const CATEGORIES = {
+  acties: { label:"Acties", emoji:"🏃", levels:{
+    makkelijk:["slapen","rennen","vallen","gapen","zingen","lachen","huilen","springen"],
+    medium:["tandenpoetsen","afwassen","stofzuigen","boodschappen doen","haren kammen","veters strikken","een ei bakken","een band plakken"],
+    moeilijk:["jongleren","hypnotiseren","balanceren","improviseren","souffleren","kalligraferen","mediteren","choreograferen"],
+  }},
+  dieren: { label:"Dieren in beweging", emoji:"🐒", levels:{
+    makkelijk:["kikker","slang","vlinder","krab","spin","mier","worm","hagedis"],
+    medium:["flamingo","zeepaardje","schildpad","kreeft","otter","bever","eekhoorn","mol"],
+    moeilijk:["bidsprinkhaan","walrus","pauw","struisvogel","stinkdier","kameel","wasbeer","axolotl"],
+  }},
+  beroepen: { label:"Beroepen in actie", emoji:"👷", levels:{
+    makkelijk:["goochelaar","dirigent","kapitein","ober","postbode","scheidsrechter","glazenwasser","schoenmaker"],
+    medium:["tuinman","schilder","cameraman","pianostemmer","klokkenmaker","houthakker","imker","loodgieter"],
+    moeilijk:["tolk","rechter","dompteur","bergbeklimmer","archeoloog","stuntman","paleontoloog","meteoroloog"],
+  }},
+  emoties: { label:"Emoties & gebaren", emoji:"😊", levels:{
+    makkelijk:["blij","verdrietig","boos","bang","moe","verbaasd","trots","verlegen"],
+    medium:["jaloers","opgewonden","verveeld","zenuwachtig","opgelucht","teleurgesteld","geërgerd","geschrokken"],
+    moeilijk:["weemoedig","vastberaden","sceptisch","overweldigd","berustend","triomfantelijk","vervreemd","ontroerd"],
+  }},
+  personages: { label:"Personages & wezens", emoji:"🧙", levels:{
+    makkelijk:["superheld","ninja","cowboy","robot","clown","engel","duivel","skelet"],
+    medium:["vampier","weerwolf","zombie","mummie","alien","detective","spion","kabouter"],
+    moeilijk:["griffioen","kraken","minotaurus","banshee","poltergeist","sjamaan","samurai","gladiator"],
+  }},
+  bewegen: { label:"Bewegen", emoji:"🤸", levels:{
+    makkelijk:["hinkelen","kruipen","huppelen","klimmen","glijden","duikelen","achteruitlopen","sluipen"],
+    medium:["surfen","abseilen","kanoën","zeilen","paragliden","rolschaatsen","skateboarden","steppen"],
+    moeilijk:["basejumpen","parkour","freerunnen","wakeboarden","kitesurfen","bungeejumpen","ijsklimmen","canyoning"],
+  }},
+  uitdrukkingen: { label:"Uitdrukkingen", emoji:"💬", levels:{
+    makkelijk:["de kat uit de boom kijken","een appeltje voor de dorst","boter bij de vis","als een kip zonder kop lopen","in de wolken zijn","vlinders in je buik hebben","de koe bij de horens vatten","de hond in de pot vinden"],
+    medium:["de spijker op de kop slaan","voor iemands neus wegkapen","met de deur in huis vallen","een oogje in het zeil houden","de handen uit de mouwen steken","op eieren lopen","iets door de vingers zien","de druppel die de emmer doet overlopen"],
+    moeilijk:["de knoop doorhakken","iets in de wind slaan","een oor aannaaien","de plank misslaan","achter de feiten aanlopen","de kool en de geit sparen","de teugels laten vieren","het achterste van je tong laten zien"],
+  }},
+};
+const CAT_KEYS = Object.keys(CATEGORIES);
+const TEAM_COLORS = ["#ff5d5d","#2ec4b6","#ffc93c","#8e7dff"];
+
+function shuffle(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function pad2(n){ return n<10 ? "0"+n : ""+n; }
+
+// ---------------------------------------------------------------------------
+// State
+// ---------------------------------------------------------------------------
+const state = {
+  screen: "setup",
+  numTeams: 2,
+  teamNames: ["",""],
+  selectedCats: new Set(CAT_KEYS),
+  level: "makkelijk",
+  turnSeconds: 60,
+  teams: [],
+  currentTeamIndex: 0,
+  wordQueue: [],
+  currentWord: "",
+  currentCat: "",
+  turnCorrectCount: 0,
+  timeLeft: 60,
+  timerRunning: false,
+  timerHandle: null,
+};
+
+function levelInfo(key){ return LEVELS.find(l=>l.key===key); }
+
+function buildWordPool(){
+  const pool = [];
+  Array.from(state.selectedCats).forEach(catKey=>{
+    const cat = CATEGORIES[catKey];
+    cat.levels[state.level].forEach(w=>pool.push({ word:w, catLabel: cat.emoji+" "+cat.label }));
+  });
+  return shuffle(pool);
+}
+
+function nextWord(){
+  if(state.wordQueue.length===0) state.wordQueue = buildWordPool();
+  const entry = state.wordQueue.pop();
+  state.currentWord = entry.word;
+  state.currentCat = entry.catLabel;
+}
+
+function startGame(){
+  state.teams = state.teamNames.map((n,i)=>({ name:n.trim()||("Team "+(i+1)), score:0, color:TEAM_COLORS[i%TEAM_COLORS.length] }));
+  state.currentTeamIndex = 0;
+  state.wordQueue = buildWordPool();
+  state.screen = "turnIntro";
+  render();
+}
+
+function beginTurn(){
+  state.turnCorrectCount = 0;
+  state.timeLeft = state.turnSeconds;
+  state.timerRunning = true;
+  nextWord();
+  state.screen = "playing";
+  render();
+  state.timerHandle = setInterval(()=>{
+    if(state.timeLeft>0){ state.timeLeft--; renderTimerOnly(); }
+    if(state.timeLeft===0){
+      clearInterval(state.timerHandle);
+      state.timerRunning=false;
+      state.screen = "turnResult";
+      render();
+    }
+  },1000);
+}
+
+function markCorrect(){
+  state.turnCorrectCount++;
+  state.teams[state.currentTeamIndex].score++;
+  nextWord();
+  render();
+}
+
+function skipWord(){
+  nextWord();
+  render();
+}
+
+function goToNextTeam(){
+  state.currentTeamIndex = (state.currentTeamIndex+1) % state.teams.length;
+  state.screen = "turnIntro";
+  render();
+}
+
+function endGame(){
+  clearInterval(state.timerHandle);
+  state.screen = "finalResult";
+  render();
+}
+
+function newGame(){
+  clearInterval(state.timerHandle);
+  state.screen = "setup";
+  render();
+}
+
+// ---------------------------------------------------------------------------
+// Render
+// ---------------------------------------------------------------------------
+const app = document.getElementById("app");
+
+function render(){
+  if(state.screen==="setup") app.innerHTML = renderSetup();
+  else if(state.screen==="turnIntro") app.innerHTML = renderTurnIntro();
+  else if(state.screen==="playing") app.innerHTML = renderPlaying();
+  else if(state.screen==="turnResult") app.innerHTML = renderTurnResult();
+  else if(state.screen==="finalResult") app.innerHTML = renderFinalResult();
+  attachHandlers();
+}
+
+function renderTimerOnly(){
+  const el = document.getElementById("timeDisplay");
+  if(el) el.textContent = pad2(Math.floor(state.timeLeft/60))+":"+pad2(state.timeLeft%60);
+  const circle = document.getElementById("timerCircle");
+  if(circle) circle.style.borderColor = state.timeLeft<=10 ? "#ff5d5d" : "#2ec4b6";
+  const counter = document.getElementById("correctCount");
+  if(counter) counter.textContent = state.turnCorrectCount;
+}
+
+function levelPillColor(key){
+  return key==="makkelijk" ? "#2ec4b6" : key==="medium" ? "#ffc93c" : "#ff5d5d";
+}
+
+function wordFontSize(word){
+  if(word.length > 28) return "1.15rem";
+  if(word.length > 16) return "1.5rem";
+  return "2.1rem";
+}
+
+function renderSetup(){
+  let namesHtml = "";
+  for(let i=0;i<state.numTeams;i++){
+    namesHtml += `<input class="name-input" data-idx="${i}" value="${state.teamNames[i]||""}" placeholder="Naam team ${i+1}" maxlength="16">`;
+  }
+  let catHtml = "";
+  CAT_KEYS.forEach(key=>{
+    const cat = CATEGORIES[key];
+    const active = state.selectedCats.has(key);
+    catHtml += `<button class="cat-btn ${active?'active':''}" data-cat="${key}">${cat.emoji} ${cat.label}</button>`;
+  });
+  let lvlHtml = "";
+  LEVELS.forEach(l=>{
+    const active = state.level===l.key;
+    lvlHtml += `<button class="level-btn ${active?'active':''}" data-level="${l.key}"><span class="lvl-emoji">${l.emoji}</span><span>${l.label}</span></button>`;
+  });
+  const currentLvl = levelInfo(state.level);
+  return `
+    <div class="wrap">
+      <h1 class="title">Hints</h1>
+      <p class="subtitle">Beeld het uit, praten mag niet! 🤐</p>
+      <div class="card">
+        <div class="label-row">👥 Aantal teams</div>
+        <div class="row-center">
+          <button class="circle-btn" id="teamsMinus">−</button>
+          <span class="count">${state.numTeams}</span>
+          <button class="circle-btn" id="teamsPlus">+</button>
+        </div>
+        <div class="names-box">${namesHtml}</div>
+        <div class="label-row">📶 Niveau</div>
+        <div class="level-choice">${lvlHtml}</div>
+        <p class="hint" style="margin:-12px 0 20px">${currentLvl.emoji} ${currentLvl.label} — ${currentLvl.sub}</p>
+        <div class="label-row">🗂️ Categorieën</div>
+        <div class="cat-choice">${catHtml}</div>
+        <div class="label-row">⏱️ Tijd per beurt</div>
+        <div class="row-center">
+          <button class="circle-btn" id="timeMinus">−</button>
+          <span class="count" style="width:60px">${state.turnSeconds}s</span>
+          <button class="circle-btn" id="timePlus">+</button>
+        </div>
+        <button class="big-btn" id="startBtn">▶️ Start het spel</button>
+      </div>
+    </div>`;
+}
+
+function renderTurnIntro(){
+  const team = state.teams[state.currentTeamIndex];
+  let scoresHtml = "";
+  state.teams.forEach(t=>{
+    scoresHtml += `<div class="team-row" style="background:${t.color}22"><span>${t.name}</span><span>${t.score} punten</span></div>`;
+  });
+  return `
+    <div class="wrap">
+      <div class="card">
+        <div class="team-banner" style="background:${team.color};color:#fff8ed">${team.name} is aan de beurt</div>
+        <p class="hint" style="margin-bottom:18px">Eén speler van dit team beeldt uit, de rest van het team raadt. Niet praten, spellen of het antwoord zelf noemen!</p>
+        <p style="font-family:'Baloo 2';font-weight:700;margin-bottom:8px">Stand</p>
+        ${scoresHtml}
+        <div style="margin-top:16px">
+          <button class="big-btn" id="beginTurnBtn">▶️ Start beurt (${state.turnSeconds}s)</button>
+        </div>
+        <div style="margin-top:12px">
+          <button class="big-btn dark" id="endGameBtn">🏁 Spel beëindigen</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderPlaying(){
+  const lvl = levelInfo(state.level);
+  return `
+    <div class="wrap">
+      <p class="subtitle" style="margin-bottom:8px">${state.teams[state.currentTeamIndex].name}
+        <span class="level-pill" style="background:${levelPillColor(state.level)};color:${state.level==='medium'?'#171a3d':'#fff8ed'}">${lvl.emoji} ${lvl.label}</span>
+      </p>
+      <div class="card">
+        <div class="timer-circle" id="timerCircle" style="border-color:${state.timeLeft<=10?'#ff5d5d':'#2ec4b6'}">
+          <span class="time" id="timeDisplay">${pad2(Math.floor(state.timeLeft/60))}:${pad2(state.timeLeft%60)}</span>
+        </div>
+        <p class="hint" style="margin-bottom:8px">Goed geraden: <b id="correctCount" style="color:#171a3d">${state.turnCorrectCount}</b></p>
+        <div class="word-box">
+          <p class="word" style="font-size:${wordFontSize(state.currentWord)}">${state.currentWord}</p>
+          <p class="cat">${state.currentCat}</p>
+        </div>
+        <div class="grid2">
+          <button class="big-btn green" id="correctBtn">✅ Goed!</button>
+          <button class="big-btn dark" id="skipBtn">⏭ Overslaan</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderTurnResult(){
+  const team = state.teams[state.currentTeamIndex];
+  return `
+    <div class="wrap">
+      <div class="card">
+        <p class="center-text" style="font-family:'Baloo 2';font-size:1.4rem;font-weight:800;margin:0 0 4px">Tijd is om! ⏰</p>
+        <p class="center-text hint" style="margin-bottom:16px">${team.name} raadde deze beurt</p>
+        <p class="center-text" style="font-family:'Baloo 2';font-size:3rem;font-weight:800;color:${team.color};margin:0 0 20px">${state.turnCorrectCount}</p>
+        <button class="big-btn" id="nextTeamBtn" style="margin-bottom:12px">➡️ Volgende team</button>
+        <button class="big-btn dark" id="endGameBtn2">🏁 Spel beëindigen</button>
+      </div>
+    </div>`;
+}
+
+function renderFinalResult(){
+  const sorted = [...state.teams].sort((a,b)=>b.score-a.score);
+  const winner = sorted[0];
+  let rows = "";
+  sorted.forEach((t,i)=>{
+    rows += `<div class="team-row" style="background:${t.color}22"><span>${i===0?"🏆 ":""}${t.name}</span><span>${t.score} punten</span></div>`;
+  });
+  return `
+    <div class="wrap">
+      <div class="card">
+        <div class="trophy">🏆</div>
+        <p class="center-text" style="font-family:'Baloo 2';font-size:1.6rem;font-weight:800;margin:0 0 4px">${winner.name} wint!</p>
+        <p class="center-text hint" style="margin-bottom:18px">Eindstand</p>
+        ${rows}
+        <div style="margin-top:16px">
+          <button class="big-btn" id="newGameBtn">🔁 Nieuw spel</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ---------------------------------------------------------------------------
+// Event handlers
+// ---------------------------------------------------------------------------
+function attachHandlers(){
+  if(state.screen==="setup"){
+    document.getElementById("teamsMinus").onclick = ()=>{ setNumTeams(state.numTeams-1); };
+    document.getElementById("teamsPlus").onclick = ()=>{ setNumTeams(state.numTeams+1); };
+    document.getElementById("timeMinus").onclick = ()=>{ state.turnSeconds=Math.max(30,state.turnSeconds-15); render(); };
+    document.getElementById("timePlus").onclick = ()=>{ state.turnSeconds=Math.min(120,state.turnSeconds+15); render(); };
+    document.getElementById("startBtn").onclick = startGame;
+    document.querySelectorAll(".name-input").forEach(inp=>{
+      inp.oninput = (e)=>{ state.teamNames[+e.target.dataset.idx] = e.target.value; };
+    });
+    document.querySelectorAll(".level-btn").forEach(btn=>{
+      btn.onclick = ()=>{ state.level = btn.dataset.level; render(); };
+    });
+    document.querySelectorAll(".cat-btn").forEach(btn=>{
+      btn.onclick = ()=>{
+        const key = btn.dataset.cat;
+        if(state.selectedCats.has(key)){ if(state.selectedCats.size>1) state.selectedCats.delete(key); }
+        else state.selectedCats.add(key);
+        render();
+      };
+    });
+  } else if(state.screen==="turnIntro"){
+    document.getElementById("beginTurnBtn").onclick = beginTurn;
+    document.getElementById("endGameBtn").onclick = endGame;
+  } else if(state.screen==="playing"){
+    document.getElementById("correctBtn").onclick = markCorrect;
+    document.getElementById("skipBtn").onclick = skipWord;
+  } else if(state.screen==="turnResult"){
+    document.getElementById("nextTeamBtn").onclick = goToNextTeam;
+    document.getElementById("endGameBtn2").onclick = endGame;
+  } else if(state.screen==="finalResult"){
+    document.getElementById("newGameBtn").onclick = newGame;
+  }
+}
+
+function setNumTeams(n){
+  n = Math.max(2, Math.min(4, n));
+  state.numTeams = n;
+  while(state.teamNames.length < n) state.teamNames.push("");
+  while(state.teamNames.length > n) state.teamNames.pop();
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
