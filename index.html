@@ -117,6 +117,13 @@
   .card.placeholder::before{ display:none; }
   .card.placeholder h2{ color:var(--chalk); }
   .card.placeholder p{ color:rgba(247,244,234,0.75); }
+  .section-title{
+    font-family:'Kalam', cursive;
+    color:var(--chalk);
+    font-size:1.5rem;
+    margin:0 0 20px;
+  }
+  .section + .section{ margin-top:52px; }
   footer{
     text-align:center;
     padding:28px 24px 40px;
@@ -133,17 +140,37 @@
 </header>
 
 <main>
-  <div class="board">
-    <a class="card" href="overhoren-mc.html">
-      <span class="icon">📚</span>
-      <h2>Overhoren</h2>
-      <p>Oefen je proefwerkstof en overhoor jezelf met meerkeuzevragen.</p>
-    </a>
+  <div class="section">
+    <h2 class="section-title">Overhoren</h2>
+    <div class="board">
+      <a class="card" href="overhoren-mc.html">
+        <span class="icon">📚</span>
+        <h2>Overhoren</h2>
+        <p>Oefen je proefwerkstof en overhoor jezelf met meerkeuzevragen.</p>
+      </a>
+    </div>
+  </div>
 
-    <div class="card placeholder">
-      <span class="icon">✨</span>
-      <h2>Binnenkort</h2>
-      <p>Hier komt binnenkort een nieuwe app of spelletje bij.</p>
+  <div class="section">
+    <h2 class="section-title">Spelletjes</h2>
+    <div class="board">
+      <a class="card" href="de-bedrieger.html">
+        <span class="icon">🕵️</span>
+        <h2>De Bedrieger</h2>
+        <p>Ontdek wie de bedrieger is in dit groepsspel.</p>
+      </a>
+
+      <a class="card" href="hints.html">
+        <span class="icon">💡</span>
+        <h2>Hints</h2>
+        <p>Geef en raad hints in dit woordspel.</p>
+      </a>
+
+      <div class="card placeholder">
+        <span class="icon">✨</span>
+        <h2>Binnenkort</h2>
+        <p>Hier komt binnenkort nog een spelletje bij.</p>
+      </div>
     </div>
   </div>
 </main>
