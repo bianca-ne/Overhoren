@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Overhoren - Unit One (multiple choice)</title>
+<style>
+:root{
+  --bg:#f5f6f8; --card:#ffffff; --text:#1c1e21; --sub:#6b7280;
+  --accent:#2563eb; --good:#16a34a; --bad:#dc2626; --border:#e5e7eb;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#16171a; --card:#212327; --text:#eef0f2; --sub:#9aa0a8;
+    --accent:#5b8cff; --good:#4ade80; --bad:#f87171; --border:#33363c;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16171a; --card:#212327; --text:#eef0f2; --sub:#9aa0a8;
+  --accent:#5b8cff; --good:#4ade80; --bad:#f87171; --border:#33363c;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+*{box-sizing:border-box;}
+body{
+  margin:0; height:100%; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  display:flex; justify-content:center;
+}
+.wrap{width:100%; max-width:480px; padding:20px 16px 40px;}
+h1{font-size:1.3rem; margin:4px 0 2px;}
+.sub{color:var(--sub); font-size:.9rem; margin-bottom:18px;}
+.card{
+  background:var(--card); border:1px solid var(--border); border-radius:16px;
+  padding:18px; margin-bottom:16px;
+}
+.mode-row{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;}
+.mode-btn{
+  flex:1 1 auto; padding:10px 8px; border-radius:10px; border:1px solid var(--border);
+  background:transparent; color:var(--text); font-size:.85rem; cursor:pointer;
+}
+.mode-btn.active{background:var(--accent); color:#fff; border-color:var(--accent);}
+.start-btn{
+  width:100%; padding:13px; border-radius:12px; border:none; background:var(--accent);
+  color:#fff; font-size:1rem; font-weight:600; cursor:pointer;
+}
+#quizArea{display:none;}
+.progress{display:flex; justify-content:space-between; font-size:.8rem; color:var(--sub); margin-bottom:10px;}
+.question{
+  font-size:1.5rem; font-weight:700; text-align:center; padding:18px 8px 22px; word-break:break-word;
+}
+.direction-tag{
+  display:inline-block; font-size:.7rem; text-transform:uppercase; letter-spacing:.04em;
+  color:var(--accent); background:rgba(37,99,235,.1); padding:3px 8px; border-radius:6px; margin-bottom:8px;
+}
+.options{display:flex; flex-direction:column; gap:10px; margin-bottom:12px;}
+.option{
+  padding:13px 14px; border-radius:10px; border:1px solid var(--border); background:var(--bg);
+  color:var(--text); font-size:1rem; text-align:left; cursor:pointer;
+}
+.option.correct{background:rgba(22,163,74,.15); border-color:var(--good); color:var(--good); font-weight:600;}
+.option.wrong{background:rgba(220,38,38,.15); border-color:var(--bad); color:var(--bad); font-weight:600;}
+.option:disabled{cursor:default; opacity:.85;}
+.btn{
+  width:100%; padding:12px; border-radius:10px; border:none; font-size:.95rem; font-weight:600; cursor:pointer;
+  background:var(--accent); color:#fff;
+}
+.btn.hidden{display:none;}
+#resultArea{display:none; text-align:center;}
+#resultArea .score{font-size:2.2rem; font-weight:700; margin:8px 0;}
+.missed-list{text-align:left; font-size:.85rem; margin-top:14px; max-height:240px; overflow-y:auto;}
+.missed-list div{padding:6px 0; border-bottom:1px solid var(--border);}
+.result-btn-row{display:flex; gap:10px; margin-top:14px;}
+.btn-secondary{background:transparent; border:1px solid var(--border); color:var(--text);}
+footer{text-align:center; font-size:.75rem; color:var(--sub); margin-top:10px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Overhoren: Unit One woordjes</h1>
+  <div class="sub">Multiple choice — Engels ↔ Nederlands</div>
+
+  <div class="card" id="setupArea">
+    <div class="mode-row" id="modeRow">
+      <button class="mode-btn active" data-mode="en-nl">Engels → Nederlands</button>
+      <button class="mode-btn" data-mode="nl-en">Nederlands → Engels</button>
+      <button class="mode-btn" data-mode="mix">Gemengd</button>
+    </div>
+    <button class="start-btn" id="startBtn">Start overhoring (34 woorden)</button>
+  </div>
+
+  <div class="card" id="quizArea">
+    <div class="progress"><span id="progressText"></span><span id="scoreText"></span></div>
+    <div class="direction-tag" id="directionTag"></div>
+    <div class="question" id="questionText"></div>
+    <div class="options" id="optionsArea"></div>
+    <button class="btn hidden" id="nextBtn">Volgende</button>
+  </div>
+
+  <div class="card" id="resultArea">
+    <div>Klaar!</div>
+    <div class="score" id="finalScore"></div>
+    <div id="missedWrap" style="display:none;">
+      <div class="sub" style="margin-bottom:4px;">Nog even oefenen:</div>
+      <div class="missed-list" id="missedList"></div>
+    </div>
+    <div class="result-btn-row">
+      <button class="btn btn-secondary" id="restartAllBtn">Alle woorden opnieuw</button>
+      <button class="btn" id="restartMissedBtn" style="display:none;">Herhaal fouten</button>
+    </div>
+  </div>
+
+  <footer>Woordenlijst Unit One · multiple choice, 4 opties per vraag</footer>
+</div>
+
+<script>
+const WORDS = [
+  {en:"qualities", nl:["eigenschappen","karakter"]},
+  {en:"to move", nl:["bewegen","verplaatsen"]},
+  {en:"quiet", nl:["stil","rustig"]},
+  {en:"I am good at", nl:["ik ben goed in"]},
+  {en:"scared", nl:["bang"]},
+  {en:"I am proud of", nl:["ik ben trots op"]},
+  {en:"surname", nl:["achternaam"]},
+  {en:"my hobbies are", nl:["mijn hobby's zijn"]},
+  {en:"tired", nl:["moe"]},
+  {en:"hunter-gatherer", nl:["jager-verzamelaar"]},
+  {en:"to become", nl:["worden"]},
+  {en:"poem", nl:["gedicht"]},
+  {en:"to describe", nl:["beschrijven","uitleggen"]},
+  {en:"poisonous", nl:["giftig"]},
+  {en:"to hold", nl:["vasthouden"]},
+  {en:"to survive", nl:["overleven"]},
+  {en:"to laugh", nl:["lachen"]},
+  {en:"verb", nl:["werkwoord"]},
+  {en:"favourite", nl:["favoriet"]},
+  {en:"active", nl:["actief"]},
+  {en:"female", nl:["vrouw"]},
+  {en:"age", nl:["leeftijd"]},
+  {en:"first name", nl:["voornaam"]},
+  {en:"because", nl:["omdat"]},
+  {en:"helpful", nl:["hulpvaardig"]},
+  {en:"character", nl:["karakter"]},
+  {en:"honest", nl:["eerlijk"]},
+  {en:"clever", nl:["slim"]},
+  {en:"male", nl:["man"]},
+  {en:"confident", nl:["vol vertrouwen"]},
+  {en:"nervous", nl:["nerveus"]},
+  {en:"creative", nl:["creatief"]},
+  {en:"patient", nl:["geduldig"]},
+  {en:"excited", nl:["opgewonden"]}
+];
+
+let queue = [];
+let idx = 0;
+let correct = 0;
+let missed = [];
+let selectedMode = "en-nl";
+let currentItem = null;
+let currentDir = "en-nl";
+
+const modeRow = document.getElementById('modeRow');
+modeRow.addEventListener('click', e=>{
+  const btn = e.target.closest('.mode-btn');
+  if(!btn) return;
+  [...modeRow.children].forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedMode = btn.dataset.mode;
+});
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function buildQueue(source){
+  return shuffle(source).map(w=>{
+    let dir = selectedMode;
+    if(dir==="mix") dir = Math.random()<0.5 ? "en-nl":"nl-en";
+    return {word:w, dir:dir};
+  });
+}
+
+document.getElementById('startBtn').addEventListener('click', ()=>{
+  queue = buildQueue(WORDS);
+  idx=0; correct=0; missed=[];
+  document.getElementById('setupArea').style.display='none';
+  document.getElementById('resultArea').style.display='none';
+  document.getElementById('quizArea').style.display='block';
+  showQuestion();
+});
+
+function getAnswerText(item, dir){
+  return dir==="en-nl" ? item.nl[0] : item.en;
+}
+
+function showQuestion(){
+  if(idx>=queue.length){ return finish(); }
+  const q = queue[idx];
+  currentItem = q.word;
+  currentDir = q.dir;
+  document.getElementById('progressText').textContent = `Vraag ${idx+1} / ${queue.length}`;
+  document.getElementById('scoreText').textContent = `Score: ${correct}`;
+  document.getElementById('directionTag').textContent = currentDir==="en-nl" ? "Engels → Nederlands" : "Nederlands → Engels";
+  document.getElementById('questionText').textContent = currentDir==="en-nl" ? currentItem.en : currentItem.nl[0];
+
+  const correctAnswer = getAnswerText(currentItem, currentDir);
+  let pool = WORDS.filter(w=>w!==currentItem).map(w=>getAnswerText(w, currentDir));
+  pool = shuffle(pool).slice(0,3);
+  const options = shuffle([correctAnswer, ...pool]);
+
+  const optionsArea = document.getElementById('optionsArea');
+  optionsArea.innerHTML='';
+  options.forEach(opt=>{
+    const b = document.createElement('button');
+    b.className='option';
+    b.textContent = opt;
+    b.addEventListener('click', ()=>selectAnswer(b, opt, correctAnswer));
+    optionsArea.appendChild(b);
+  });
+  document.getElementById('nextBtn').classList.add('hidden');
+}
+
+function selectAnswer(btn, chosen, correctAnswer){
+  const buttons = document.querySelectorAll('#optionsArea .option');
+  buttons.forEach(b=>b.disabled=true);
+  const isCorrect = chosen===correctAnswer;
+  if(isCorrect){
+    btn.classList.add('correct');
+    correct++;
+  } else {
+    btn.classList.add('wrong');
+    missed.push(currentItem);
+    buttons.forEach(b=>{ if(b.textContent===correctAnswer) b.classList.add('correct'); });
+  }
+  document.getElementById('scoreText').textContent = `Score: ${correct}`;
+  document.getElementById('nextBtn').classList.remove('hidden');
+}
+
+document.getElementById('nextBtn').addEventListener('click', ()=>{
+  idx++;
+  showQuestion();
+});
+
+function finish(){
+  document.getElementById('quizArea').style.display='none';
+  document.getElementById('resultArea').style.display='block';
+  document.getElementById('finalScore').textContent = `${correct} / ${queue.length} goed`;
+  const missedWrap = document.getElementById('missedWrap');
+  const missedList = document.getElementById('missedList');
+  const restartMissedBtn = document.getElementById('restartMissedBtn');
+  if(missed.length>0){
+    missedWrap.style.display='block';
+    missedList.innerHTML = missed.map(m=>`<div><b>${m.en}</b> — ${m.nl[0]}</div>`).join('');
+    restartMissedBtn.style.display='block';
+  } else {
+    missedWrap.style.display='none';
+    restartMissedBtn.style.display='none';
+  }
+}
+
+document.getElementById('restartAllBtn').addEventListener('click', ()=>{
+  document.getElementById('resultArea').style.display='none';
+  document.getElementById('setupArea').style.display='block';
+});
+
+document.getElementById('restartMissedBtn').addEventListener('click', ()=>{
+  queue = buildQueue(missed);
+  idx=0; correct=0; missed=[];
+  document.getElementById('resultArea').style.display='none';
+  document.getElementById('quizArea').style.display='block';
+  showQuestion();
+});
+</script>
+</body>
+</html>
