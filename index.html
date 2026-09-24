@@ -6,229 +6,84 @@
 <title>De Leerhoek</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --board-green:#2f4538;
-    --board-green-dark:#233329;
-    --chalk:#f7f4ea;
-    --pencil-yellow:#e8b23f;
-    --pencil-red:#c1453c;
-    --wood:#b98a54;
-    --wood-dark:#9c7343;
-    --ink:#24312a;
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0;
-    font-family:'Work Sans', sans-serif;
-    background:var(--wood);
-    color:var(--ink);
-    background-image:
-      radial-gradient(circle at 20% 20%, rgba(255,255,255,0.05) 0, transparent 35%),
-      radial-gradient(circle at 80% 60%, rgba(0,0,0,0.06) 0, transparent 40%);
-  }
-  header.hero{
-    background:var(--board-green);
-    background-image:linear-gradient(160deg, var(--board-green) 0%, var(--board-green-dark) 100%);
-    color:var(--chalk);
-    padding:64px 24px 56px;
-    text-align:center;
-    border-bottom:10px solid var(--wood-dark);
-  }
-  header.hero h1{
-    font-family:'Kalam', cursive;
-    font-weight:700;
-    font-size:clamp(2.4rem, 6vw, 3.6rem);
-    margin:0 0 12px;
-    letter-spacing:0.5px;
-  }
-  header.hero p{
-    font-size:1.05rem;
-    max-width:460px;
-    margin:0 auto;
-    line-height:1.6;
-    opacity:0.9;
-  }
-  main{
-    max-width:880px;
-    margin:0 auto;
-    padding:48px 24px 80px;
-  }
-  .board{
-    display:grid;
-    grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
-    gap:36px 28px;
-  }
-  .card{
-    position:relative;
-    display:block;
-    background:var(--chalk);
-    text-decoration:none;
-    color:var(--ink);
-    padding:28px 22px 24px;
-    border-radius:2px;
-    box-shadow:0 10px 18px rgba(0,0,0,0.22);
-    transition:transform 0.15s ease, box-shadow 0.15s ease;
-  }
-  .card:nth-child(odd){ transform:rotate(-1.5deg); }
-  .card:nth-child(even){ transform:rotate(1.5deg); }
-  .card:hover{
-    transform:rotate(0deg) translateY(-4px);
-    box-shadow:0 16px 24px rgba(0,0,0,0.28);
-  }
-  .card::before{
-    content:"";
-    position:absolute;
-    top:-14px;
-    left:50%;
-    transform:translateX(-50%) rotate(-3deg);
-    width:64px;
-    height:22px;
-    background:var(--pencil-yellow);
-    opacity:0.85;
-  }
-  .card:nth-child(even)::before{
-    background:var(--pencil-red);
-    transform:translateX(-50%) rotate(3deg);
-  }
-  .card .icon{
-    font-size:2rem;
-    display:block;
-    margin-bottom:10px;
-  }
-  .card h2{
-    font-family:'Kalam', cursive;
-    font-size:1.5rem;
-    margin:0 0 8px;
-  }
-  .card p{
-    margin:0;
-    font-size:0.92rem;
-    line-height:1.5;
-    color:#4a5b50;
-  }
-  .card.placeholder{
-    background:transparent;
-    border:2px dashed rgba(247,244,234,0.55);
-    box-shadow:none;
-    color:var(--chalk);
-  }
-  .card.placeholder::before{ display:none; }
-  .card.placeholder h2{ color:var(--chalk); }
-  .card.placeholder p{ color:rgba(247,244,234,0.75); }
-  .section-title{
-    font-family:'Kalam', cursive;
-    color:var(--chalk);
-    font-size:1.5rem;
-    margin:0 0 20px;
-  }
-  .section + .section{ margin-top:52px; }
-  .subject-title{
-    font-family:'Kalam', cursive;
-    color:var(--chalk);
-    font-size:1.15rem;
-    opacity:0.85;
-    margin:0 0 14px;
-  }
-  .subject + .subject{ margin-top:34px; }
-  footer{
-    text-align:center;
-    padding:28px 24px 40px;
-    color:rgba(247,244,234,0.65);
-    font-size:0.85rem;
-  }
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header class="hero">
-  <h1>De Leerhoek</h1>
-  <p>Overhoor je leerwerk of speel een leerspelletje — kies hieronder wat je wilt doen.</p>
+<header class="top">
+  <div class="inner">
+    <a class="brand" href="index.html">De Leerhoek</a>
+    <span class="tagline">Overhoren &amp; oefenen</span>
+  </div>
 </header>
+
+<div class="hero">
+  <h1>Welkom</h1>
+  <p>Kies een vak om te overhoren, of speel een spelletje.</p>
+</div>
 
 <main>
   <div class="section">
-    <h2 class="section-title">Overhoren</h2>
+    <p class="section-label">Overhoren</p>
+    <div class="grid">
+      <a class="card engels" href="engels.html">
+        <div class="badge">EN</div>
+        <h3>Engels</h3>
+        <p>Woordjes en grammatica oefenen.</p>
+        <span class="go">Bekijk quizzen →</span>
+      </a>
 
-    <div class="subject">
-      <h3 class="subject-title">Engels</h3>
-      <div class="board">
-        <a class="card" href="overhoren-mc.html">
-          <span class="icon">📚</span>
-          <h2>Overhoren</h2>
-          <p>Oefen je proefwerkstof en overhoor jezelf met meerkeuzevragen.</p>
-        </a>
-        
-        <a class="card" href="overhoren-invullen.html">
-  <span class="icon">✏️</span>
-  <h2>Invulvragen</h2>
-  <p>Oefen je Engelse woordjes door de open vragen zelf in te vullen.</p>
-</a>
-      </div>
-    </div>
+      <a class="card geschiedenis" href="geschiedenis.html">
+        <div class="badge">GS</div>
+        <h3>Geschiedenis</h3>
+        <p>Jaartallen en gebeurtenissen overhoren.</p>
+        <span class="go">Bekijk quizzen →</span>
+      </a>
 
-    <div class="subject">
-      <h3 class="subject-title">Geschiedenis</h3>
-      <div class="board">
-        <div class="card placeholder">
-          <span class="icon">✨</span>
-          <h2>Binnenkort</h2>
-          <p>Hier komt binnenkort een quiz bij.</p>
-        </div>
-      </div>
-    </div>
+      <a class="card aardrijkskunde" href="aardrijkskunde.html">
+        <div class="badge">AK</div>
+        <h3>Aardrijkskunde</h3>
+        <p>Landen, kaarten en topografie.</p>
+        <span class="go">Bekijk quizzen →</span>
+      </a>
 
-    <div class="subject">
-      <h3 class="subject-title">Aardrijkskunde</h3>
-      <div class="board">
-        <div class="card placeholder">
-          <span class="icon">✨</span>
-          <h2>Binnenkort</h2>
-          <p>Hier komt binnenkort een quiz bij.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="subject">
-      <h3 class="subject-title">Natuur/techniek</h3>
-      <div class="board">
-        <div class="card placeholder">
-          <span class="icon">✨</span>
-          <h2>Binnenkort</h2>
-          <p>Hier komt binnenkort een quiz bij.</p>
-        </div>
-      </div>
+      <a class="card natuur" href="natuur-techniek.html">
+        <div class="badge">NT</div>
+        <h3>Natuur/techniek</h3>
+        <p>Begrippen en proefwerkstof oefenen.</p>
+        <span class="go">Bekijk quizzen →</span>
+      </a>
     </div>
   </div>
 
   <div class="section">
-    <h2 class="section-title">Spelletjes</h2>
-    <div class="board">
-      <a class="card" href="de-bedrieger.html">
-        <span class="icon">🕵️</span>
-        <h2>De Bedrieger</h2>
+    <p class="section-label">Spelletjes</p>
+    <div class="grid">
+      <a class="card spel" href="de-bedrieger.html">
+        <div class="badge">🕵️</div>
+        <h3>De Bedrieger</h3>
         <p>Ontdek wie de bedrieger is in dit groepsspel.</p>
+        <span class="go">Speel →</span>
       </a>
 
-      <a class="card" href="hints.html">
-        <span class="icon">💡</span>
-        <h2>Hints</h2>
+      <a class="card spel" href="hints.html">
+        <div class="badge">💡</div>
+        <h3>Hints</h3>
         <p>Geef en raad hints in dit woordspel.</p>
+        <span class="go">Speel →</span>
       </a>
 
-      <div class="card placeholder">
-        <span class="icon">✨</span>
-        <h2>Binnenkort</h2>
-        <p>Hier komt binnenkort nog een spelletje bij.</p>
+      <div class="card empty">
+        <div class="badge">＋</div>
+        <h3>Binnenkort</h3>
+        <p>Hier komt nog een spelletje bij.</p>
       </div>
     </div>
   </div>
 </main>
 
-<footer>
-  Gemaakt voor thuis oefenen.
-</footer>
+<footer>Gemaakt voor thuis oefenen.</footer>
 
 </body>
 </html>

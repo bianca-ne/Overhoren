@@ -1,0 +1,178 @@
+:root{
+  --ink:#1c2b2a;
+  --bg:#f6f5f1;
+  --surface:#ffffff;
+  --border:#e4e0d6;
+  --teal:#0f766e;
+  --teal-dark:#0b5c56;
+  --muted:#5c6b64;
+
+  --c-engels:#0f766e;
+  --c-geschiedenis:#b4530a;
+  --c-aardrijkskunde:#3f6b2f;
+  --c-natuur:#3a5a9e;
+  --c-spel:#a3325f;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:'Inter', sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+}
+h1,h2,h3{
+  font-family:'Sora', sans-serif;
+  margin:0;
+}
+
+/* Header */
+header.top{
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:20px 24px;
+}
+header.top .inner{
+  max-width:960px;
+  margin:0 auto;
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:6px;
+}
+header.top a.brand{
+  font-family:'Sora', sans-serif;
+  font-weight:700;
+  font-size:1.15rem;
+  color:var(--ink);
+  text-decoration:none;
+}
+header.top .tagline{
+  font-size:0.85rem;
+  color:var(--muted);
+}
+
+/* Hero (homepage only) */
+.hero{
+  max-width:960px;
+  margin:0 auto;
+  padding:48px 24px 8px;
+}
+.hero h1{
+  font-size:clamp(1.8rem, 4vw, 2.4rem);
+  margin-bottom:8px;
+}
+.hero p{
+  color:var(--muted);
+  font-size:1rem;
+  max-width:520px;
+}
+
+/* Breadcrumb (subpages) */
+.breadcrumb{
+  max-width:960px;
+  margin:0 auto;
+  padding:28px 24px 0;
+}
+.breadcrumb a{
+  color:var(--teal);
+  text-decoration:none;
+  font-size:0.9rem;
+  font-weight:500;
+}
+.breadcrumb a:hover{ text-decoration:underline; }
+
+main{
+  max-width:960px;
+  margin:0 auto;
+  padding:32px 24px 80px;
+}
+
+.section-label{
+  font-size:0.78rem;
+  font-weight:600;
+  letter-spacing:0.04em;
+  color:var(--muted);
+  text-transform:uppercase;
+  margin:0 0 16px;
+}
+.section + .section{ margin-top:48px; }
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+  gap:16px;
+}
+
+/* Card */
+.card{
+  display:block;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:20px;
+  text-decoration:none;
+  color:var(--ink);
+  transition:box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+  position:relative;
+  overflow:hidden;
+}
+.card::before{
+  content:"";
+  position:absolute;
+  top:0; left:0; right:0;
+  height:4px;
+  background:var(--accent, var(--teal));
+}
+.card:hover{
+  box-shadow:0 6px 16px rgba(28,43,42,0.08);
+  transform:translateY(-2px);
+  border-color:var(--accent, var(--teal));
+}
+.card .badge{
+  width:36px; height:36px;
+  border-radius:8px;
+  background:color-mix(in srgb, var(--accent, var(--teal)) 12%, white);
+  color:var(--accent, var(--teal));
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.1rem;
+  margin-bottom:14px;
+}
+.card h3{
+  font-size:1.05rem;
+  margin-bottom:6px;
+}
+.card p{
+  font-size:0.88rem;
+  color:var(--muted);
+  margin:0 0 14px;
+  line-height:1.5;
+}
+.card .go{
+  font-size:0.82rem;
+  font-weight:600;
+  color:var(--accent, var(--teal));
+}
+
+.card.empty{
+  background:transparent;
+  border:1.5px dashed var(--border);
+  color:var(--muted);
+}
+.card.empty::before{ display:none; }
+.card.empty .badge{ background:transparent; border:1.5px dashed var(--border); color:var(--muted); }
+
+/* Category accent per vak */
+.card.engels{ --accent:var(--c-engels); }
+.card.geschiedenis{ --accent:var(--c-geschiedenis); }
+.card.aardrijkskunde{ --accent:var(--c-aardrijkskunde); }
+.card.natuur{ --accent:var(--c-natuur); }
+.card.spel{ --accent:var(--c-spel); }
+
+footer{
+  text-align:center;
+  padding:24px;
+  color:var(--muted);
+  font-size:0.82rem;
+  border-top:1px solid var(--border);
+}
